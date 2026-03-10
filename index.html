@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHAOS LAB // by Omar Rafael Pérez Gallardo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap');
+
+:root {
+  --bg: #020408;
+  --surface: #060d14;
+  --panel: #0a141e;
+  --border: #0d2233;
+  --cyan: #00e5ff;
+  --amber: #ffab00;
+  --red: #ff3d3d;
+  --green: #39ff6e;
+  --purple: #b44fff;
+  --dim: #1a3347;
+  --text: #c8dde8;
+  --muted: #4a6070;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── TOP BAR ── */
+#topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 7px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+#topbar .logo {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--cyan);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+#topbar .version {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-left: -10px;
+}
+
+.tab-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text); border-color: var(--dim); }
+.tab-btn.active { color: var(--cyan); border-color: var(--cyan); background: rgba(0,229,255,0.05); }
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-pill {
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.status-pill span {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--green); border-radius: 50%;
+  margin-right: 5px;
+  animation: blink 1.2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  width: 26px; height: 26px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  border-radius: 2px;
+}
+.icon-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+.icon-btn.active { color: var(--amber); border-color: var(--amber); background: rgba(255,171,0,0.08); }
+
+/* ── MAIN LAYOUT ── */
+#main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 215px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section-label {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.param-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.param-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text);
+}
+.param-label span:last-child { color: var(--cyan); }
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--dim);
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 9px; height: 9px;
+  background: var(--cyan);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.ctrl-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  padding: 5px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+  transition: all 0.15s;
+  text-align: left;
+}
+.ctrl-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,229,255,0.04); }
+.ctrl-btn.danger:hover { border-color: var(--red); color: var(--red); background: rgba(255,61,61,0.04); }
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+.preset-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  padding: 4px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+.preset-btn:hover { color: var(--amber); border-color: var(--amber); }
+
+/* orbit count btns */
+.orbit-grid {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 3px;
+  margin-bottom: 6px;
+}
+.orbit-cnt-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  padding: 4px 2px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.orbit-cnt-btn.active { color: var(--green); border-color: var(--green); background: rgba(57,255,110,0.06); }
+
+/* audio bar */
+#audio-bar {
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 20px;
+  margin-top: 4px;
+}
+.audio-bar-segment {
+  flex: 1;
+  background: var(--dim);
+  border-radius: 1px;
+  transition: height 0.08s ease;
+  min-height: 2px;
+}
+
+/* ── CANVAS AREA ── */
+#canvas-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+#main-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+
+#info-overlay {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.9;
+  pointer-events: none;
+}
+
+#lyapunov-display {
+  position: absolute;
+  top: 12px; right: 12px;
+  text-align: right;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 2;
+  pointer-events: none;
+}
+#lyapunov-display .val { color: var(--amber); font-size: 13px; }
+
+/* ── EXPLANATION PANEL (modal overlay) ── */
+#explain-panel {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(2,4,8,0.94);
+  z-index: 50;
+  overflow-y: auto;
+  padding: 40px;
+}
+#explain-panel.open { display: block; }
+
+#explain-panel .close-btn {
+  position: fixed;
+  top: 52px; right: 280px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 5px 14px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  z-index: 51;
+}
+#explain-panel .close-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+
+.explain-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 6px;
+  margin-bottom: 6px;
+}
+.explain-sub {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  margin-bottom: 36px;
+}
+
+.explain-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 900px;
+}
+
+.explain-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cyan);
+  padding: 20px;
+}
+.explain-card.amber { border-left-color: var(--amber); }
+.explain-card.green { border-left-color: var(--green); }
+.explain-card.purple { border-left-color: var(--purple); }
+
+.explain-card h3 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.explain-card.amber h3 { color: var(--amber); }
+.explain-card.green h3 { color: var(--green); }
+.explain-card.purple h3 { color: var(--purple); }
+
+.explain-card p {
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--text);
+}
+.explain-card .highlight {
+  color: var(--cyan);
+  font-weight: bold;
+}
+.explain-card.amber .highlight { color: var(--amber); }
+.explain-card.green .highlight { color: var(--green); }
+.explain-card.purple .highlight { color: var(--purple); }
+
+.explain-full {
+  max-width: 900px;
+  margin-top: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+}
+.explain-full p {
+  font-size: 11px;
+  line-height: 2;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.explain-full p:last-child { margin-bottom: 0; }
+
+.system-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  margin-top: 16px;
+}
+.system-table th {
+  text-align: left;
+  padding: 6px 10px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--border);
+  font-weight: normal;
+}
+.system-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.6;
+}
+.system-table td:first-child { color: var(--cyan); }
+
+/* ── RIGHT PANEL ── */
+#right-panel {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-title {
+  padding: 7px 10px;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+}
+
+.tabs-panel {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+.tab-p {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  padding: 5px;
+  cursor: pointer;
+}
+.tab-p.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+#bifurc-canvas { width: 100%; flex: 1; cursor: crosshair; }
+#bifurc2-canvas { width: 100%; flex: 1; }
+
+#chaos-meter {
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+}
+.meter-bar {
+  height: 4px;
+  background: var(--dim);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--amber), var(--red));
+  transition: width 0.3s;
+  border-radius: 2px;
+}
+
+/* ── FULLSCREEN MODE ── */
+body.cinema #sidebar,
+body.cinema #right-panel,
+body.cinema #topbar { display: none !important; }
+body.cinema #main { display: block; }
+body.cinema #canvas-area { width: 100vw; height: 100vh; }
+
+#cinema-hint {
+  position: fixed;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 3px;
+  pointer-events: none;
+  display: none;
+  z-index: 200;
+}
+body.cinema #cinema-hint { display: block; animation: fadehint 4s ease forwards; }
+@keyframes fadehint { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
+
+/* ── GALLERY MODAL ── */
+#gallery-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(2,4,8,0.97);
+  z-index: 300;
+  overflow-y: auto;
+  padding: 30px;
+}
+#gallery-modal.open { display: block; }
+#gallery-modal .g-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 5px;
+  margin-bottom: 4px;
+}
+#gallery-modal .g-sub {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  margin-bottom: 24px;
+}
+#gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 860px;
+}
+.gallery-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.gallery-card:hover { border-color: var(--cyan); }
+.gallery-card canvas { width: 100%; display: block; }
+.gallery-card .g-label {
+  padding: 6px 10px;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  border-top: 1px solid var(--border);
+}
+.gallery-card .g-label span { color: var(--cyan); }
+.gallery-card .g-load-btn {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: rgba(0,229,255,0.12);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  padding: 3px 7px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.gallery-card:hover .g-load-btn { opacity: 1; }
+
+/* ── SHARE TOAST ── */
+#share-toast {
+  position: fixed;
+  bottom: 30px; right: 30px;
+  background: var(--surface);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 10px 18px;
+  z-index: 400;
+  display: none;
+  animation: slideup 0.2s ease;
+}
+@keyframes slideup { from{transform:translateY(10px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+/* ── VIRAL FOOTER ── */
+#viral-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(6,13,20,0.92);
+  border-top: 1px solid var(--border);
+  padding: 6px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+body.cinema #viral-footer { display: none; }
+#viral-footer a {
+  color: var(--cyan);
+  text-decoration: none;
+  letter-spacing: 2px;
+}
+#viral-footer a:hover { color: var(--amber); }
+#visit-counter { color: var(--amber); font-size: 10px; }
+
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="logo">CHAOS LAB</div>
+  <div class="version">v2.0</div>
+  <div style="font-size:9px;color:var(--muted);letter-spacing:1px;border-left:1px solid var(--border);padding-left:14px;">
+    by <span style="color:var(--cyan);letter-spacing:2px;">OMAR RAFAEL PÉREZ GALLARDO</span>
+    <span style="color:var(--muted);margin-left:6px;">// ORION OPS · DIGITAL DR.</span>
+  </div>
+  <button class="tab-btn active" onclick="setMode('lorenz',this)">LORENZ</button>
+  <button class="tab-btn" onclick="setMode('rossler',this)">RÖSSLER</button>
+  <button class="tab-btn" onclick="setMode('halvorsen',this)">HALVORSEN</button>
+  <button class="tab-btn" onclick="setMode('thomas',this)">THOMAS</button>
+  <button class="tab-btn" onclick="setMode('phase',this)">PHASE</button>
+  <div class="topbar-right">
+    <button class="icon-btn" id="audio-btn" title="Toggle Sound" onclick="toggleAudio()">♪</button>
+    <button class="icon-btn" title="Galería" onclick="openGallery()">⊞</button>
+    <button class="icon-btn" title="Compartir URL" onclick="shareURL()">⤴</button>
+    <button class="icon-btn" id="cinema-btn" title="Modo Cinematográfico" onclick="toggleCinema()">⛶</button>
+    <button class="icon-btn" title="Screenshot" onclick="takeScreenshot()">⬡</button>
+    <button class="icon-btn" title="¿Qué es esto?" onclick="toggleExplain()">?</button>
+    <div class="status-pill"><span></span>LIVE</div>
+  </div>
+</div>
+
+<!-- GALLERY MODAL -->
+<div id="gallery-modal">
+  <div style="display:flex;align-items:center;justify-content:space-between;max-width:860px;margin-bottom:20px;">
+    <div>
+      <div class="g-title">GALERÍA DE ATRACTORES</div>
+      <div class="g-sub">6 CONFIGURACIONES SELECCIONADAS · CLICK PARA CARGAR</div>
+    </div>
+    <button onclick="closeGallery()" style="background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 14px;cursor:pointer;letter-spacing:2px;">✕ CERRAR</button>
+  </div>
+  <div id="gallery-grid"></div>
+</div>
+
+<!-- SHARE TOAST -->
+<div id="share-toast">✓ URL COPIADA AL PORTAPAPELES</div>
+
+<!-- CINEMA HINT -->
+<div id="cinema-hint">PRESIONA F · ESC PARA SALIR DEL MODO CINE</div>
+
+<!-- VIRAL FOOTER -->
+<div id="viral-footer">
+  <div>
+    CHAOS LAB v2.0 &nbsp;·&nbsp;
+    <span style="color:var(--text)">por</span>
+    <a href="https://github.com/orpg" target="_blank">OMAR RAFAEL PÉREZ GALLARDO</a>
+    &nbsp;·&nbsp;
+    <a href="#" onclick="toggleExplain();return false;" style="color:var(--amber)">ORION OPS</a>
+    &nbsp;·&nbsp;
+    <a href="#" onclick="toggleExplain();return false;" style="color:var(--green)">DIGITAL DR.</a>
+    &nbsp;·&nbsp; Querétaro, México
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div id="visit-counter" style="color:var(--amber);font-size:10px;">— visitas</div>
+    <button onclick="shareURL()" style="background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px 10px;cursor:pointer;letter-spacing:2px;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--cyan)';this.style.color='var(--cyan)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">⤴ COMPARTIR</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+
+    <div>
+      <div class="section-label">PARAMETERS</div>
+      <div class="param-row">
+        <div class="param-label"><span id="p1label">σ sigma</span><span id="p1val">10.0</span></div>
+        <input type="range" id="p1" min="0" max="30" step="0.1" value="10" oninput="updateParam()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span id="p2label">ρ rho</span><span id="p2val">28.0</span></div>
+        <input type="range" id="p2" min="0" max="60" step="0.1" value="28" oninput="updateParam()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span id="p3label">β beta</span><span id="p3val">2.67</span></div>
+        <input type="range" id="p3" min="0.01" max="10" step="0.01" value="2.667" oninput="updateParam()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>DT</span><span id="dtval">0.005</span></div>
+        <input type="range" id="dtslider" min="0.001" max="0.02" step="0.001" value="0.005" oninput="updateParam()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>TRAILS</span><span id="trailval">3000</span></div>
+        <input type="range" id="trailslider" min="500" max="8000" step="100" value="3000" oninput="updateParam()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>SPEED</span><span id="speedval">6</span></div>
+        <input type="range" id="speedslider" min="1" max="20" step="1" value="6" oninput="updateParam()">
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">INITIAL CONDITIONS</div>
+      <div class="param-row">
+        <div class="param-label"><span>X₀</span><span id="x0val">0.1</span></div>
+        <input type="range" id="x0" min="-20" max="20" step="0.1" value="0.1" oninput="resetAttractor()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>Y₀</span><span id="y0val">0.0</span></div>
+        <input type="range" id="y0" min="-20" max="20" step="0.1" value="0" oninput="resetAttractor()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>Z₀</span><span id="z0val">1.0</span></div>
+        <input type="range" id="z0" min="-20" max="20" step="0.1" value="1" oninput="resetAttractor()">
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">MÚLTIPLES ÓRBITAS</div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">Órbitas simultáneas (IC distintas)</div>
+      <div class="orbit-grid">
+        <button class="orbit-cnt-btn active" onclick="setOrbitCount(1,this)">1</button>
+        <button class="orbit-cnt-btn" onclick="setOrbitCount(3,this)">3</button>
+        <button class="orbit-cnt-btn" onclick="setOrbitCount(5,this)">5</button>
+        <button class="orbit-cnt-btn" onclick="setOrbitCount(10,this)">10</button>
+        <button class="orbit-cnt-btn" onclick="setOrbitCount(20,this)">20</button>
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>SPREAD δ</span><span id="spreadval">0.10</span></div>
+        <input type="range" id="spreadslider" min="0.001" max="5" step="0.001" value="0.1" oninput="updateSpread()">
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">DISPLAY</div>
+      <div class="param-row">
+        <div class="param-label"><span>COLOR</span></div>
+        <select id="colormode" onchange="clearCanvas()">
+          <option value="velocity">VELOCITY</option>
+          <option value="time">TIME</option>
+          <option value="zcoord">Z-COORD</option>
+          <option value="orbit">ORBIT ID</option>
+          <option value="mono">MONO</option>
+        </select>
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>PROJECTION</span></div>
+        <select id="projection">
+          <option value="xz">X-Z</option>
+          <option value="xy">X-Y</option>
+          <option value="yz">Y-Z</option>
+          <option value="3d">3D PERSP</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">SOUND</div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Tono = velocidad orbital</div>
+      <div class="param-row">
+        <div class="param-label"><span>BASE FREQ</span><span id="freqval">110Hz</span></div>
+        <input type="range" id="freqslider" min="40" max="400" step="1" value="110" oninput="updateAudioParam()">
+      </div>
+      <div class="param-row">
+        <div class="param-label"><span>VOLUME</span><span id="volval">40%</span></div>
+        <input type="range" id="volslider" min="0" max="100" step="1" value="40" oninput="updateAudioParam()">
+      </div>
+      <div id="audio-bar">
+        <div class="audio-bar-segment" id="ab0"></div>
+        <div class="audio-bar-segment" id="ab1"></div>
+        <div class="audio-bar-segment" id="ab2"></div>
+        <div class="audio-bar-segment" id="ab3"></div>
+        <div class="audio-bar-segment" id="ab4"></div>
+        <div class="audio-bar-segment" id="ab5"></div>
+        <div class="audio-bar-segment" id="ab6"></div>
+        <div class="audio-bar-segment" id="ab7"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">PRESETS</div>
+      <div class="preset-grid">
+        <button class="preset-btn" onclick="loadPreset('classic')">CLASSIC</button>
+        <button class="preset-btn" onclick="loadPreset('periodic')">PERIODIC</button>
+        <button class="preset-btn" onclick="loadPreset('edge')">EDGE</button>
+        <button class="preset-btn" onclick="loadPreset('spiral')">SPIRAL</button>
+        <button class="preset-btn" onclick="loadPreset('transient')">TRANSIENT</button>
+        <button class="preset-btn" onclick="loadPreset('deep')">DEEP</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">ACTIONS</div>
+      <button class="ctrl-btn" onclick="clearCanvas()">▣ CLEAR TRAIL</button>
+      <button class="ctrl-btn" onclick="resetAttractor()">↺ RESET ORBITS</button>
+      <button class="ctrl-btn" onclick="togglePause()">⏸ PAUSE / PLAY</button>
+      <button class="ctrl-btn" onclick="exportData()">⬇ EXPORT CSV</button>
+      <button class="ctrl-btn danger" onclick="perturbIC()">⚡ PERTURB IC</button>
+    </div>
+
+  </div>
+
+  <!-- CANVAS -->
+  <div id="canvas-area">
+    <canvas id="main-canvas"></canvas>
+    <div id="info-overlay">
+      <div id="coord-info">X: — Y: — Z: —</div>
+      <div id="time-info">t = 0.000</div>
+      <div id="mode-info">MODE: LORENZ</div>
+      <div id="orbit-info">ORBITS: 1</div>
+    </div>
+    <div id="lyapunov-display">
+      <div>LYAPUNOV EST.</div>
+      <div class="val" id="lyapunov-val">—</div>
+      <div style="margin-top:5px">DIVERGENCE</div>
+      <div class="val" id="div-val">—</div>
+      <div style="margin-top:5px">ITER</div>
+      <div class="val" id="iter-val">0</div>
+    </div>
+
+    <!-- EXPLANATION PANEL -->
+    <div id="explain-panel">
+      <button class="close-btn" onclick="toggleExplain()">✕ CERRAR</button>
+      <div class="explain-title">CHAOS LAB</div>
+      <div class="explain-sub">QUÉ ES ESTO · CÓMO FUNCIONA · PARA QUÉ SIRVE</div>
+
+      <div class="explain-grid">
+        <div class="explain-card">
+          <h3>¿Qué es el caos?</h3>
+          <p>El caos no es aleatoriedad. Es un sistema <span class="highlight">completamente determinista</span> — donde si conoces el estado inicial, puedes predecir el futuro con matemáticas exactas.<br><br>
+          El problema: una diferencia <span class="highlight">millones de veces más pequeña que un átomo</span> en las condiciones iniciales produce resultados completamente diferentes. Edward Lorenz lo descubrió en 1963 modelando el clima.</p>
+        </div>
+        <div class="explain-card amber">
+          <h3>El Efecto Mariposa</h3>
+          <p>Lorenz notó que al redondear un número de 0.506127 a 0.506, la simulación del clima terminaba siendo <span class="highlight amber">completamente diferente</span>.<br><br>
+          Esa sensibilidad extrema a condiciones iniciales es lo que define al caos. El botón <span class="highlight amber">⚡ PERTURB IC</span> hace exactamente eso — aplica una perturbación mínima y puedes ver cómo las órbitas se separan exponencialmente.</p>
+        </div>
+        <div class="explain-card green">
+          <h3>¿Qué estás viendo?</h3>
+          <p>Un <span class="highlight green">atractor extraño</span>: la trayectoria de un sistema en el espacio de fases. Nunca se repite exactamente, nunca escapa — orbita eternamente en una estructura fractal con dimensión ~2.06.<br><br>
+          El color muestra velocidad orbital. Las <span class="highlight green">órbitas múltiples</span> demuestran la divergencia exponencial: puntos que empiezan juntos acaban en lados opuestos del atractor.</p>
+        </div>
+        <div class="explain-card purple">
+          <h3>El Exponente de Lyapunov</h3>
+          <p>El número en el panel derecho (LYAPUNOV EST.) mide <span class="highlight purple">qué tan rápido divergen dos órbitas cercanas</span>. Si es positivo → caos real. Si es negativo → sistema estable.<br><br>
+          Para Lorenz clásico el valor es ≈ <span class="highlight purple">0.9056</span>. Esto significa que el error de predicción se duplica cada ~0.76 unidades de tiempo. Es la razón por la que el clima es impredecible más allá de ~2 semanas.</p>
+        </div>
+      </div>
+
+      <div class="explain-full">
+        <p><strong style="color:var(--cyan);letter-spacing:2px;">PARA QUÉ SIRVE EN LA PRÁCTICA</strong></p>
+        <p>La teoría del caos no es solo matemática bonita. Tiene aplicaciones directas en ingeniería, medicina y sistemas de misión:</p>
+        <p><strong style="color:var(--amber)">Clima y meteorología:</strong> El sistema de Lorenz fue creado modelando convección atmosférica. La imposibilidad de predicción a largo plazo tiene fundamento matemático, no es falta de datos.</p>
+        <p><strong style="color:var(--green)">Cardiología:</strong> Un corazón sano tiene variabilidad caótica en su ritmo. La pérdida de esa complejidad (señal demasiado regular) es indicador temprano de falla cardíaca. Se usa en monitoreo ICU avanzado.</p>
+        <p><strong style="color:var(--purple)">Misiones espaciales:</strong> Las trayectorias cerca de puntos de Lagrange (L1-L5) exhiben dinámica caótica. Las misiones Genesis y ISEE-3 usaron estas propiedades para diseñar órbitas de bajo consumo energético.</p>
+        <p><strong style="color:var(--cyan)">Control de sistemas:</strong> La sincronización de osciladores caóticos (Pecora & Carroll, 1990) es la base de algunas técnicas de comunicación encriptada y control de robots en entornos complejos.</p>
+      </div>
+
+      <div class="explain-full" style="margin-top:12px;background:none;border:1px solid var(--cyan);padding:16px 20px;">
+        <p style="font-size:11px;color:var(--muted);line-height:2;">
+          <span style="color:var(--cyan);letter-spacing:3px;font-size:10px;">CREADO POR</span><br>
+          <span style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--cyan);letter-spacing:4px;">OMAR RAFAEL PÉREZ GALLARDO</span><br>
+          Deep-tech founder · AI Systems Architect · Querétaro, México<br>
+          <span style="color:var(--amber)">ORION OPS</span> — AI Operating System for Human Space Missions &nbsp;|&nbsp;
+          <span style="color:var(--green)">DIGITAL DR.</span> — AI Health Ecosystem
+        </p>
+      </div>
+
+      <div class="explain-full" style="margin-top:12px;">
+        <p><strong style="color:var(--cyan);letter-spacing:2px;">LOS 4 SISTEMAS INCLUIDOS</strong></p>
+        <table class="system-table">
+          <tr><th>Sistema</th><th>Descripción</th><th>Aplicación</th></tr>
+          <tr><td>LORENZ</td><td>Convección atmosférica. El más icónico. Dos lóbulos con transiciones impredecibles.</td><td>Clima, turbulencia, base de la teoría del caos moderna</td></tr>
+          <tr><td>RÖSSLER</td><td>Más simple que Lorenz. Un solo lóbulo en espiral con eyección caótica.</td><td>Química, biología, osciladores electrónicos</td></tr>
+          <tr><td>HALVORSEN</td><td>Simetría cúbica perfecta. Tres ejes idénticos con no-linealidades cuadráticas.</td><td>Teoría de sistemas simétricos, física de partículas</td></tr>
+          <tr><td>THOMAS</td><td>Basado en funciones seno. Produce estructuras hipnóticas de alta dimensión.</td><td>Sistemas disipativo-conservativos, dinámica cíclica</td></tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right-panel">
+    <div class="tabs-panel">
+      <button class="tab-p active" onclick="setRightTab('bifurc',this)">BIFURCATION</button>
+      <button class="tab-p" onclick="setRightTab('logistic',this)">LOGISTIC</button>
+    </div>
+
+    <!-- BIFURCATION PANEL -->
+    <div id="bifurc-panel" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div class="panel-title">BIFURCATION — ρ SWEEP &nbsp;<span id="bifurc-rho-label" style="color:var(--cyan);">ρ=28.0 ▲ TÚ ESTÁS AQUÍ</span></div>
+      <div style="position:relative;flex:1;overflow:hidden;">
+        <canvas id="bifurc-canvas" style="width:100%;height:100%;"></canvas>
+        <canvas id="bifurc-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+      </div>
+      <!-- EXPLANATION BOX -->
+      <div id="bifurc-explain" style="
+        padding:10px 12px;
+        border-top:1px solid var(--border);
+        font-size:9px;
+        line-height:1.8;
+        color:var(--muted);
+        background:var(--surface);
+        overflow-y:auto;
+        max-height:160px;
+      ">
+        <div style="color:var(--cyan);letter-spacing:2px;font-size:8px;margin-bottom:5px;">¿QUÉ ES ESTE DIAGRAMA?</div>
+        <p style="margin-bottom:6px;">
+          Cada columna vertical = un valor de <span style="color:var(--cyan)">ρ</span> diferente.<br>
+          Los puntos muestran <em>dónde termina</em> la órbita después de estabilizarse.
+        </p>
+        <div id="bifurc-zone-text" style="
+          padding:6px 8px;
+          border-left:2px solid var(--amber);
+          background:rgba(255,171,0,0.05);
+          font-size:9px;
+          line-height:1.7;
+          color:var(--text);
+          margin-bottom:6px;
+        ">Mueve el slider ρ para ver en qué zona estás.</div>
+        <p style="color:var(--muted);font-size:8px;">
+          <span style="color:var(--green)">■</span> ρ &lt; 1 → colapsa a cero &nbsp;
+          <span style="color:var(--amber)">■</span> 1–24 → punto fijo &nbsp;
+          <span style="color:var(--red)">■</span> &gt;24 → CAOS
+        </p>
+      </div>
+    </div>
+
+    <!-- LOGISTIC PANEL -->
+    <div id="logistic-panel" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
+      <div class="panel-title">LOGISTIC MAP &nbsp; xₙ₊₁ = r · xₙ · (1−xₙ)</div>
+      <div style="position:relative;flex:1;overflow:hidden;">
+        <canvas id="bifurc2-canvas" style="width:100%;height:100%;"></canvas>
+        <canvas id="logistic-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+      </div>
+      <!-- EXPLANATION BOX -->
+      <div style="
+        padding:10px 12px;
+        border-top:1px solid var(--border);
+        font-size:9px;
+        line-height:1.8;
+        color:var(--muted);
+        background:var(--surface);
+        overflow-y:auto;
+        max-height:200px;
+      ">
+        <div style="color:var(--purple);letter-spacing:2px;font-size:8px;margin-bottom:5px;">¿QUÉ ES ESTO?</div>
+        <p style="margin-bottom:6px;">
+          Una sola ecuación: <span style="color:var(--cyan)">xₙ₊₁ = r · xₙ · (1−xₙ)</span><br>
+          Modela poblaciones, epidemias, mercados financieros.
+        </p>
+        <p style="margin-bottom:6px;">
+          <span style="color:var(--green)">r &lt; 3.0:</span> la población estabiliza en un valor fijo. Predecible.<br>
+          <span style="color:var(--amber)">r ≈ 3.0–3.5:</span> oscila entre 2 valores. Luego 4, luego 8...<br>
+          <span style="color:var(--red)">r &gt; 3.57:</span> caos total — nunca se repite, imposible predecir.<br>
+          <span style="color:var(--cyan)">Ventanas blancas:</span> islas de orden dentro del caos.
+        </p>
+        <p style="
+          padding:6px 8px;
+          border-left:2px solid var(--purple);
+          background:rgba(180,79,255,0.05);
+          color:var(--text);
+          font-size:9px;
+          line-height:1.6;
+        ">
+          La conexión con Lorenz: el mismo fenómeno matemático — caos determinista — demostrado con <em>una sola línea de álgebra</em>. Prueba que la complejidad no es requisito para el caos.
+        </p>
+      </div>
+    </div>
+
+    <div id="chaos-meter">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--muted);">CHAOS INTENSITY</div>
+      <div class="meter-bar"><div class="meter-fill" id="chaos-fill" style="width:60%"></div></div>
+      <div style="font-size:8px;color:var(--muted);margin-top:3px;display:flex;justify-content:space-between;">
+        <span>FIXED</span><span>PERIODIC</span><span>CHAOTIC</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let mode = 'lorenz';
+let paused = false;
+let globalT = 0;
+let iterCount = 0;
+let maxTrail = 3000;
+let speed = 6;
+let dt = 0.005;
+let orbitCount = 1;
+let orbitSpread = 0.1;
+let rotAngle = 0;
+let rightTab = 'bifurc';
+let audioEnabled = false;
+let audioCtx = null;
+let oscillators = [];
+let gainNodes = [];
+let analyserNode = null;
+let audioBaseFreq = 110;
+let audioVol = 0.4;
+
+// Orbit colors (up to 20)
+const ORBIT_COLORS = [
+  '#00e5ff','#39ff6e','#ffab00','#ff3d3d','#b44fff',
+  '#ff6bb5','#4dffdb','#fff176','#82b1ff','#ff8a65',
+  '#a5d6a7','#ef9a9a','#90caf9','#f48fb1','#ce93d8',
+  '#80cbc4','#ffcc02','#ff7043','#26c6da','#aed581'
+];
+
+// Orbits array: each has {x,y,z,sx,sy,sz,trail,lyapSum,lyapN}
+let orbits = [];
+
+const d0 = 1e-8;
+let p = { p1: 10, p2: 28, p3: 2.667 };
+
+const mainCanvas = document.getElementById('main-canvas');
+const ctx = mainCanvas.getContext('2d');
+const bifCanvas = document.getElementById('bifurc-canvas');
+const bifCtx = bifCanvas.getContext('2d');
+const bifCanvas2 = document.getElementById('bifurc2-canvas');
+const bifCtx2 = bifCanvas2.getContext('2d');
+
+// ─── SYSTEMS ───────────────────────────────────────────────────────────────
+const SYSTEMS = {
+  lorenz: {
+    labels: ['σ sigma','ρ rho','β beta'],
+    ranges: [[0,30,10],[0,60,28],[0.01,10,2.667]],
+    fn: (x,y,z,p) => [p.p1*(y-x), x*(p.p2-z)-y, x*y-p.p3*z]
+  },
+  rossler: {
+    labels: ['a','b','c'],
+    ranges: [[0,1,0.2],[0,1,0.2],[0,20,5.7]],
+    fn: (x,y,z,p) => [-y-z, x+p.p1*y, p.p2+z*(x-p.p3)]
+  },
+  halvorsen: {
+    labels: ['a','(fixed)','(fixed)'],
+    ranges: [[0,3,1.4],[0,1,0],[0,1,0]],
+    fn: (x,y,z,p) => {
+      const a=p.p1;
+      return [-a*x-4*y-4*z-y*y, -a*y-4*z-4*x-z*z, -a*z-4*x-4*y-x*x];
+    }
+  },
+  thomas: {
+    labels: ['b (dissip)','(fixed)','(fixed)'],
+    ranges: [[0,0.3,0.19],[0,1,0],[0,1,0]],
+    fn: (x,y,z,p) => [Math.sin(y)-p.p1*x, Math.sin(z)-p.p1*y, Math.sin(x)-p.p1*z]
+  },
+  phase: {
+    labels: ['σ sigma','ρ rho','β beta'],
+    ranges: [[0,30,10],[0,60,28],[0.01,10,2.667]],
+    fn: (x,y,z,p) => [p.p1*(y-x), x*(p.p2-z)-y, x*y-p.p3*z]
+  }
+};
+
+// ─── RK4 ───────────────────────────────────────────────────────────────────
+function rk4(x,y,z,fn,p,dt) {
+  const [k1x,k1y,k1z]=fn(x,y,z,p);
+  const [k2x,k2y,k2z]=fn(x+.5*dt*k1x,y+.5*dt*k1y,z+.5*dt*k1z,p);
+  const [k3x,k3y,k3z]=fn(x+.5*dt*k2x,y+.5*dt*k2y,z+.5*dt*k2z,p);
+  const [k4x,k4y,k4z]=fn(x+dt*k3x,y+dt*k3y,z+dt*k3z,p);
+  return [
+    x+dt*(k1x+2*k2x+2*k3x+k4x)/6,
+    y+dt*(k1y+2*k2y+2*k3y+k4y)/6,
+    z+dt*(k1z+2*k2z+2*k3z+k4z)/6
+  ];
+}
+
+// ─── PROJECTION ────────────────────────────────────────────────────────────
+function project(px,py,pz) {
+  const proj = document.getElementById('projection').value;
+  if(proj==='xz') return [px,pz];
+  if(proj==='xy') return [px,py];
+  if(proj==='yz') return [py,pz];
+  const ca=Math.cos(rotAngle),sa=Math.sin(rotAngle);
+  const rx=ca*px-sa*pz, rz=sa*px+ca*pz;
+  const fov=250, dist=rz+80;
+  return [rx*fov/dist, py*fov/dist];
+}
+
+// ─── COLOR ─────────────────────────────────────────────────────────────────
+function getColor(i,total,vel,zv,orbitIdx) {
+  const cm=document.getElementById('colormode').value;
+  if(cm==='orbit') {
+    const c=ORBIT_COLORS[orbitIdx%ORBIT_COLORS.length];
+    const alpha=0.3+0.5*(i/total);
+    return c+(Math.round(alpha*255)).toString(16).padStart(2,'0');
+  }
+  if(cm==='velocity') {
+    const v=Math.min(vel/50,1);
+    return `rgba(${Math.floor(v*255)},${Math.floor((1-Math.abs(v-.5)*2)*200)+55},${Math.floor((1-v)*200)},0.65)`;
+  }
+  if(cm==='time') {
+    const h=180+(i/total)*200;
+    return `hsla(${h},90%,60%,0.6)`;
+  }
+  if(cm==='zcoord') {
+    const h=200+((zv+50)/100)*160;
+    return `hsla(${h},80%,65%,0.65)`;
+  }
+  return 'rgba(0,229,255,0.5)';
+}
+
+// ─── INIT ORBITS ───────────────────────────────────────────────────────────
+function initOrbits() {
+  const x0=parseFloat(document.getElementById('x0').value);
+  const y0=parseFloat(document.getElementById('y0').value);
+  const z0=parseFloat(document.getElementById('z0').value);
+  orbits = [];
+  for(let i=0;i<orbitCount;i++) {
+    const dx=(i===0)?0:(Math.random()-.5)*orbitSpread*2;
+    const dy=(i===0)?0:(Math.random()-.5)*orbitSpread*2;
+    const dz=(i===0)?0:(Math.random()-.5)*orbitSpread*2;
+    orbits.push({
+      x:x0+dx, y:y0+dy, z:z0+dz,
+      sx:x0+dx+d0, sy:y0+dy, sz:z0+dz,
+      trail:[], lyapSum:0, lyapN:0
+    });
+  }
+  globalT=0; iterCount=0;
+  clearCanvas();
+}
+
+// ─── DRAW FRAME ────────────────────────────────────────────────────────────
+function drawFrame() {
+  const W=mainCanvas.width, H=mainCanvas.height;
+  ctx.fillStyle='rgba(2,4,8,0.035)';
+  ctx.fillRect(0,0,W,H);
+
+  if(paused) return;
+
+  const sys=SYSTEMS[mode]||SYSTEMS.lorenz;
+  const fn=sys.fn;
+
+  rotAngle+=0.0015;
+
+  let totalVel=0;
+
+  for(let s=0;s<speed;s++) {
+    for(let oi=0;oi<orbits.length;oi++) {
+      const o=orbits[oi];
+      const px=o.x,py=o.y,pz=o.z;
+      [o.x,o.y,o.z]=rk4(o.x,o.y,o.z,fn,p,dt);
+      [o.sx,o.sy,o.sz]=rk4(o.sx,o.sy,o.sz,fn,p,dt);
+
+      const dxs=o.sx-o.x, dys=o.sy-o.y, dzs=o.sz-o.z;
+      const d1=Math.sqrt(dxs*dxs+dys*dys+dzs*dzs);
+      if(d1>0){
+        o.lyapSum+=Math.log(d1/d0);
+        o.lyapN++;
+        o.sx=o.x+d0*dxs/d1;
+        o.sy=o.y+d0*dys/d1;
+        o.sz=o.z+d0*dzs/d1;
+      }
+
+      const vel=Math.sqrt((o.x-px)**2+(o.y-py)**2+(o.z-pz)**2)/dt;
+      o.trail.push({x:o.x,y:o.y,z:o.z,vel});
+      if(o.trail.length>maxTrail) o.trail.shift();
+      if(oi===0) totalVel=vel;
+    }
+    globalT+=dt; iterCount++;
+  }
+
+  // Draw all orbit trails
+  const scale=5;
+  for(let oi=0;oi<orbits.length;oi++) {
+    const o=orbits[oi];
+    const n=o.trail.length;
+    if(n<2) continue;
+    for(let i=1;i<n;i++) {
+      const prev=o.trail[i-1],cur=o.trail[i];
+      const [px1,py1]=project(prev.x,prev.y,prev.z);
+      const [px2,py2]=project(cur.x,cur.y,cur.z);
+      ctx.beginPath();
+      ctx.strokeStyle=getColor(i,n,cur.vel,cur.z,oi);
+      ctx.lineWidth=i/n*1.3;
+      ctx.moveTo(px1*scale+W/2,-py1*scale+H/2);
+      ctx.lineTo(px2*scale+W/2,-py2*scale+H/2);
+      ctx.stroke();
+    }
+    // Current point
+    const [cpx,cpy]=project(o.x,o.y,o.z);
+    const col=ORBIT_COLORS[oi%ORBIT_COLORS.length];
+    ctx.beginPath();
+    ctx.arc(cpx*scale+W/2,-cpy*scale+H/2,oi===0?3:2,0,Math.PI*2);
+    ctx.fillStyle=oi===0?'#ffffff':col;
+    ctx.fill();
+    if(oi===0){
+      ctx.beginPath();
+      ctx.arc(cpx*scale+W/2,-cpy*scale+H/2,6,0,Math.PI*2);
+      ctx.strokeStyle='rgba(0,229,255,0.5)';
+      ctx.lineWidth=1;
+      ctx.stroke();
+    }
+  }
+
+  // HUD
+  const o0=orbits[0];
+  document.getElementById('coord-info').textContent=`X: ${o0.x.toFixed(3)}  Y: ${o0.y.toFixed(3)}  Z: ${o0.z.toFixed(3)}`;
+  document.getElementById('time-info').textContent=`t = ${globalT.toFixed(2)}`;
+  document.getElementById('mode-info').textContent=`MODE: ${mode.toUpperCase()}`;
+  document.getElementById('orbit-info').textContent=`ORBITS: ${orbitCount}`;
+  document.getElementById('iter-val').textContent=iterCount.toLocaleString();
+
+  if(o0.lyapN>100){
+    const le=o0.lyapSum/(o0.lyapN*dt);
+    document.getElementById('lyapunov-val').textContent=le.toFixed(4);
+    const chaos=Math.max(0,Math.min(1,le/2));
+    document.getElementById('chaos-fill').style.width=(chaos*100)+'%';
+    const div=Math.exp(le*globalT);
+    document.getElementById('div-val').textContent=div>1e6?'>1M':div.toFixed(1)+'x';
+  }
+
+  // Audio modulation
+  if(audioEnabled && oscillators.length>0 && o0) {
+    const velNorm=Math.min(totalVel/60,1);
+    const freq=audioBaseFreq*(1+velNorm*3);
+    oscillators[0].frequency.setTargetAtTime(freq,audioCtx.currentTime,0.05);
+    if(oscillators[1]) oscillators[1].frequency.setTargetAtTime(freq*1.5,audioCtx.currentTime,0.08);
+    updateAudioBars(velNorm);
+  }
+}
+
+// ─── WEB AUDIO ─────────────────────────────────────────────────────────────
+function initAudio() {
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  analyserNode = audioCtx.createAnalyser();
+  analyserNode.fftSize = 64;
+
+  // Master gain
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.value = audioVol;
+  masterGain.connect(audioCtx.destination);
+  masterGain.connect(analyserNode);
+
+  // Oscillator 1 — base tone
+  const osc1 = audioCtx.createOscillator();
+  osc1.type = 'sine';
+  osc1.frequency.value = audioBaseFreq;
+  const g1 = audioCtx.createGain();
+  g1.gain.value = 0.5;
+  osc1.connect(g1);
+  g1.connect(masterGain);
+  osc1.start();
+  oscillators.push(osc1);
+  gainNodes.push(g1);
+
+  // Oscillator 2 — harmonic
+  const osc2 = audioCtx.createOscillator();
+  osc2.type = 'triangle';
+  osc2.frequency.value = audioBaseFreq*1.5;
+  const g2 = audioCtx.createGain();
+  g2.gain.value = 0.25;
+  osc2.connect(g2);
+  g2.connect(masterGain);
+  osc2.start();
+  oscillators.push(osc2);
+  gainNodes.push(g2);
+
+  // Oscillator 3 — sub drone
+  const osc3 = audioCtx.createOscillator();
+  osc3.type = 'sawtooth';
+  osc3.frequency.value = audioBaseFreq*0.5;
+  const g3 = audioCtx.createGain();
+  g3.gain.value = 0.1;
+  osc3.connect(g3);
+  g3.connect(masterGain);
+  osc3.start();
+  oscillators.push(osc3);
+  gainNodes.push(g3);
+}
+
+function toggleAudio() {
+  if(!audioEnabled) {
+    initAudio();
+    if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+    audioEnabled=true;
+    document.getElementById('audio-btn').classList.add('active');
+  } else {
+    audioEnabled=false;
+    document.getElementById('audio-btn').classList.remove('active');
+    // silence
+    if(gainNodes[0]) gainNodes[0].gain.setTargetAtTime(0,audioCtx.currentTime,0.1);
+    if(gainNodes[1]) gainNodes[1].gain.setTargetAtTime(0,audioCtx.currentTime,0.1);
+    if(gainNodes[2]) gainNodes[2].gain.setTargetAtTime(0,audioCtx.currentTime,0.1);
+    setTimeout(()=>{
+      oscillators.forEach(o=>{try{o.stop();}catch(e){}});
+      oscillators=[];gainNodes=[];
+      if(audioCtx){audioCtx.close();audioCtx=null;}
+    },300);
+    updateAudioBars(0);
+  }
+}
+
+function updateAudioParam() {
+  audioBaseFreq = parseInt(document.getElementById('freqslider').value);
+  audioVol = parseInt(document.getElementById('volslider').value)/100;
+  document.getElementById('freqval').textContent = audioBaseFreq+'Hz';
+  document.getElementById('volval').textContent = Math.round(audioVol*100)+'%';
+}
+
+function updateAudioBars(intensity) {
+  for(let i=0;i<8;i++){
+    const el=document.getElementById('ab'+i);
+    if(!el) continue;
+    const h=audioEnabled ? Math.max(2,Math.round((Math.sin(Date.now()/80+i)*0.5+0.5)*intensity*18+2)) : 2;
+    el.style.height=h+'px';
+    const hue=180+intensity*120;
+    el.style.background=`hsl(${hue},80%,55%)`;
+  }
+}
+
+// ─── BIFURCATION ───────────────────────────────────────────────────────────
+const bifOverlay = document.getElementById('bifurc-overlay');
+const bifOCtx = bifOverlay.getContext('2d');
+const logOverlay = document.getElementById('logistic-overlay');
+const logOCtx = logOverlay.getContext('2d');
+
+function drawBifurcation() {
+  const W=bifCanvas.offsetWidth||220, H=bifCanvas.offsetHeight||300;
+  bifCanvas.width=W; bifCanvas.height=H;
+  bifOverlay.width=W; bifOverlay.height=H;
+  bifCtx.fillStyle='#020408';
+  bifCtx.fillRect(0,0,W,H);
+  const rMin=0,rMax=55,steps=W*1.5|0;
+  for(let i=0;i<steps;i++){
+    const rho=rMin+(rMax-rMin)*i/steps;
+    let bx=0.1,by=0,bz=0;
+    const bp={...p,p2:rho};
+    const fn=SYSTEMS.lorenz.fn;
+    for(let j=0;j<300;j++) [bx,by,bz]=rk4(bx,by,bz,fn,bp,0.01);
+    for(let j=0;j<150;j++){
+      [bx,by,bz]=rk4(bx,by,bz,fn,bp,0.01);
+      bifCtx.fillStyle=`hsla(${180+rho*2},80%,65%,0.35)`;
+      bifCtx.fillRect(i/steps*W|0,H-(bz/55)*H|0,1,1);
+    }
+  }
+  // region labels
+  bifCtx.fillStyle='rgba(57,255,110,0.5)';
+  bifCtx.fillRect(0,H-3,W*0.02,2);
+  bifCtx.fillStyle='rgba(255,171,0,0.5)';
+  bifCtx.fillRect(W*0.02,H-3,W*0.43,2);
+  bifCtx.fillStyle='rgba(255,61,61,0.5)';
+  bifCtx.fillRect(W*0.45,H-3,W*0.55,2);
+  bifCtx.fillStyle='rgba(74,96,112,0.7)';
+  bifCtx.font='8px monospace';
+  bifCtx.fillText('ρ=0',3,H-6);
+  bifCtx.fillText('ρ=55',W-32,H-6);
+  bifCtx.fillText('z',4,10);
+  drawBifurcationLine();
+}
+
+function drawBifurcationLine() {
+  const W=bifOverlay.width||220, H=bifOverlay.height||300;
+  bifOCtx.clearRect(0,0,W,H);
+  const rho=p.p2;
+  const rMin=0,rMax=55;
+  const lineX=((rho-rMin)/(rMax-rMin))*W;
+
+  // Colored line
+  bifOCtx.beginPath();
+  bifOCtx.moveTo(lineX,0);
+  bifOCtx.lineTo(lineX,H);
+  bifOCtx.strokeStyle='rgba(255,255,255,0.9)';
+  bifOCtx.lineWidth=1.5;
+  bifOCtx.setLineDash([4,3]);
+  bifOCtx.stroke();
+  bifOCtx.setLineDash([]);
+
+  // Triangle marker at top
+  bifOCtx.beginPath();
+  bifOCtx.moveTo(lineX,0);
+  bifOCtx.lineTo(lineX-5,10);
+  bifOCtx.lineTo(lineX+5,10);
+  bifOCtx.closePath();
+  bifOCtx.fillStyle='#ffffff';
+  bifOCtx.fill();
+
+  // Label
+  bifOCtx.font='bold 9px monospace';
+  bifOCtx.fillStyle='#ffffff';
+  const labelX=lineX>W-50?lineX-38:lineX+4;
+  bifOCtx.fillText(`ρ=${rho.toFixed(1)}`,labelX,22);
+
+  // Update text explanation based on zone
+  const zoneEl=document.getElementById('bifurc-zone-text');
+  const label=document.getElementById('bifurc-rho-label');
+  if(!zoneEl||!label) return;
+  label.textContent=`ρ=${rho.toFixed(1)} ▲ TÚ ESTÁS AQUÍ`;
+
+  let zoneMsg='', zoneColor='var(--amber)';
+  if(rho<1){
+    zoneMsg='🟢 ZONA MUERTA (ρ<1): El sistema colapsa al origen. No hay convección, no hay movimiento. Punto fijo en cero.';
+    zoneColor='var(--green)';
+  } else if(rho<13.9){
+    zoneMsg='🟡 PUNTO FIJO ESTABLE (ρ 1–14): El sistema converge a un punto fijo. Como una pelota que siempre cae al mismo lugar. Predecible 100%.';
+    zoneColor='var(--amber)';
+  } else if(rho<24.06){
+    zoneMsg='🟠 ZONA DE TRANSICIÓN (ρ 14–24): Aparecen órbitas periódicas. El sistema empieza a "dudar" entre dos estados. Cerca del caos.';
+    zoneColor='var(--amber)';
+  } else if(rho<24.74){
+    zoneMsg='⚡ BIFURCACIÓN CRÍTICA (ρ ≈ 24.5): El punto fijo pierde estabilidad. Aquí nace el atractor extraño de Lorenz.';
+    zoneColor='var(--red)';
+  } else if(rho<=55){
+    zoneMsg='🔴 CAOS DETERMINISTA (ρ>24.74): El atractor de Lorenz completo. La trayectoria nunca se repite pero tampoco escapa. Impredecible a largo plazo.';
+    zoneColor='var(--red)';
+  }
+  zoneEl.style.borderLeftColor=zoneColor;
+  zoneEl.style.background=`rgba(${zoneColor==='var(--red)'?'255,61,61':zoneColor==='var(--green)'?'57,255,110':'255,171,0'},0.05)`;
+  zoneEl.textContent=zoneMsg;
+}
+
+function drawLogisticMap() {
+  const W=bifCanvas2.offsetWidth||220, H=bifCanvas2.offsetHeight||200;
+  bifCanvas2.width=W; bifCanvas2.height=H;
+  logOverlay.width=W; logOverlay.height=H;
+  bifCtx2.fillStyle='#020408';
+  bifCtx2.fillRect(0,0,W,H);
+  for(let i=0;i<W*2;i++){
+    const r=2.5+(1.5*i/(W*2));
+    let lx=0.5;
+    for(let j=0;j<300;j++) lx=r*lx*(1-lx);
+    for(let j=0;j<200;j++){
+      lx=r*lx*(1-lx);
+      bifCtx2.fillStyle=`hsla(${120+(r-2.5)/1.5*200|0},80%,60%,0.3)`;
+      bifCtx2.fillRect(i/(W*2)*W|0,H-lx*H|0,1,1);
+    }
+  }
+  // region bars
+  bifCtx2.fillStyle='rgba(255,171,0,0.4)';
+  bifCtx2.fillRect(0,H-2,W*0.33,2);
+  bifCtx2.fillStyle='rgba(255,100,0,0.4)';
+  bifCtx2.fillRect(W*0.33,H-2,W*0.38,2);
+  bifCtx2.fillStyle='rgba(255,61,61,0.6)';
+  bifCtx2.fillRect(W*0.71,H-2,W*0.29,2);
+  bifCtx2.fillStyle='rgba(74,96,112,0.7)';
+  bifCtx2.font='8px monospace';
+  bifCtx2.fillText('r=2.5',3,H-6);
+  bifCtx2.fillText('r=4.0',W-32,H-6);
+}
+
+// ─── UI ────────────────────────────────────────────────────────────────────
+function updateParam() {
+  p.p1=parseFloat(document.getElementById('p1').value);
+  p.p2=parseFloat(document.getElementById('p2').value);
+  p.p3=parseFloat(document.getElementById('p3').value);
+  dt=parseFloat(document.getElementById('dtslider').value);
+  maxTrail=parseInt(document.getElementById('trailslider').value);
+  speed=parseInt(document.getElementById('speedslider').value);
+  document.getElementById('p1val').textContent=p.p1.toFixed(2);
+  document.getElementById('p2val').textContent=p.p2.toFixed(2);
+  document.getElementById('p3val').textContent=p.p3.toFixed(2);
+  document.getElementById('dtval').textContent=dt.toFixed(3);
+  document.getElementById('trailval').textContent=maxTrail;
+  document.getElementById('speedval').textContent=speed;
+  // Reactive bifurcation line
+  if(rightTab==='bifurc') drawBifurcationLine();
+}
+
+function updateSpread() {
+  orbitSpread=parseFloat(document.getElementById('spreadslider').value);
+  document.getElementById('spreadval').textContent=orbitSpread.toFixed(2);
+  initOrbits();
+}
+
+function setOrbitCount(n,btn) {
+  orbitCount=n;
+  document.querySelectorAll('.orbit-cnt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  initOrbits();
+}
+
+function resetAttractor() {
+  document.getElementById('x0val').textContent=parseFloat(document.getElementById('x0').value).toFixed(1);
+  document.getElementById('y0val').textContent=parseFloat(document.getElementById('y0').value).toFixed(1);
+  document.getElementById('z0val').textContent=parseFloat(document.getElementById('z0').value).toFixed(1);
+  initOrbits();
+}
+
+function clearCanvas() {
+  ctx.fillStyle='#020408';
+  ctx.fillRect(0,0,mainCanvas.width,mainCanvas.height);
+  orbits.forEach(o=>o.trail=[]);
+}
+
+function togglePause() { paused=!paused; }
+
+function perturbIC() {
+  orbits.forEach(o=>{
+    o.x+=(Math.random()-.5)*0.01;
+    o.y+=(Math.random()-.5)*0.01;
+    o.z+=(Math.random()-.5)*0.01;
+    o.sx=o.x+d0; o.sy=o.y; o.sz=o.z;
+    o.lyapSum=0; o.lyapN=0;
+  });
+}
+
+function setMode(m,el) {
+  mode=m;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const sys=SYSTEMS[m];
+  if(sys){
+    document.getElementById('p1label').textContent=sys.labels[0];
+    document.getElementById('p2label').textContent=sys.labels[1];
+    document.getElementById('p3label').textContent=sys.labels[2];
+    const [mn1,mx1,v1]=sys.ranges[0],[mn2,mx2,v2]=sys.ranges[1],[mn3,mx3,v3]=sys.ranges[2];
+    const p1el=document.getElementById('p1'); p1el.min=mn1;p1el.max=mx1;p1el.value=v1;
+    const p2el=document.getElementById('p2'); p2el.min=mn2;p2el.max=mx2;p2el.value=v2;
+    const p3el=document.getElementById('p3'); p3el.min=mn3;p3el.max=mx3;p3el.value=v3;
+  }
+  updateParam(); initOrbits();
+}
+
+function setRightTab(tab,el) {
+  rightTab=tab;
+  document.querySelectorAll('.tab-p').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('bifurc-panel').style.display=tab==='bifurc'?'flex':'none';
+  document.getElementById('logistic-panel').style.display=tab==='logistic'?'flex':'none';
+  setTimeout(tab==='bifurc'?drawBifurcation:drawLogisticMap,50);
+}
+
+function toggleExplain() {
+  document.getElementById('explain-panel').classList.toggle('open');
+}
+
+function takeScreenshot() {
+  const link=document.createElement('a');
+  link.download=`chaoslab_${mode}_${Date.now()}.png`;
+  link.href=mainCanvas.toDataURL('image/png');
+  link.click();
+}
+
+const PRESETS = {
+  classic:   {p1:10,p2:28,p3:2.667,x0:0.1,y0:0,z0:1},
+  periodic:  {p1:10,p2:99.96,p3:2.667,x0:0.1,y0:0,z0:1},
+  edge:      {p1:10,p2:24.5,p3:2.667,x0:0.1,y0:0,z0:1},
+  spiral:    {p1:10,p2:13.9,p3:2.667,x0:0.1,y0:0,z0:1},
+  transient: {p1:10,p2:21,p3:2.667,x0:0.1,y0:0,z0:1},
+  deep:      {p1:16,p2:45.9,p3:4,x0:1,y0:1,z0:1}
+};
+
+function loadPreset(name) {
+  const pr=PRESETS[name]; if(!pr) return;
+  document.getElementById('p1').value=pr.p1;
+  document.getElementById('p2').value=pr.p2;
+  document.getElementById('p3').value=pr.p3;
+  document.getElementById('x0').value=pr.x0;
+  document.getElementById('y0').value=pr.y0;
+  document.getElementById('z0').value=pr.z0;
+  updateParam(); initOrbits();
+}
+
+function exportData() {
+  if(!orbits.length||!orbits[0].trail.length) return;
+  let csv='orbit,i,t,x,y,z,velocity\n';
+  orbits.forEach((o,oi)=>{
+    o.trail.forEach((d,i)=>{
+      csv+=`${oi},${i},${(i*dt).toFixed(4)},${d.x.toFixed(6)},${d.y.toFixed(6)},${d.z.toFixed(6)},${d.vel.toFixed(6)}\n`;
+    });
+  });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`chaoslab_${mode}_${orbitCount}orbits_t${globalT.toFixed(1)}.csv`;
+  a.click();
+}
+
+// ─── RESIZE ────────────────────────────────────────────────────────────────
+function resize() {
+  const area=document.getElementById('canvas-area');
+  mainCanvas.width=area.offsetWidth;
+  mainCanvas.height=area.offsetHeight;
+  clearCanvas();
+  if(rightTab==='bifurc') drawBifurcation();
+  else drawLogisticMap();
+}
+
+window.addEventListener('resize',resize);
+
+// ─── FULLSCREEN CINEMA MODE ────────────────────────────────────────────────
+function toggleCinema() {
+  document.body.classList.toggle('cinema');
+  const btn = document.getElementById('cinema-btn');
+  btn.classList.toggle('active');
+  if(document.body.classList.contains('cinema')) {
+    // refire cinema hint animation
+    const hint = document.getElementById('cinema-hint');
+    hint.style.animation='none';
+    void hint.offsetWidth;
+    hint.style.animation='';
+    resize();
+  } else {
+    resize();
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && document.body.classList.contains('cinema')) toggleCinema();
+  if(e.key === 'f' || e.key === 'F') toggleCinema();
+});
+
+// ─── SHARE URL ─────────────────────────────────────────────────────────────
+function shareURL() {
+  const params = new URLSearchParams({
+    mode, p1: p.p1, p2: p.p2, p3: p.p3,
+    x0: document.getElementById('x0').value,
+    y0: document.getElementById('y0').value,
+    z0: document.getElementById('z0').value,
+    orbits: orbitCount,
+    cm: document.getElementById('colormode').value,
+    proj: document.getElementById('projection').value
+  });
+  const url = `${location.origin}${location.pathname}?${params.toString()}`;
+  navigator.clipboard.writeText(url).then(() => {
+    const toast = document.getElementById('share-toast');
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2200);
+  }).catch(() => {
+    prompt('Copia esta URL:', url);
+  });
+}
+
+function loadFromURL() {
+  const params = new URLSearchParams(location.search);
+  if(!params.has('mode') && !params.has('p1')) return;
+  if(params.has('mode')) {
+    const m = params.get('mode');
+    const btn = document.querySelector(`.tab-btn[onclick*="'${m}'"]`);
+    setMode(m, btn);
+  }
+  if(params.has('p1')) { document.getElementById('p1').value = params.get('p1'); }
+  if(params.has('p2')) { document.getElementById('p2').value = params.get('p2'); }
+  if(params.has('p3')) { document.getElementById('p3').value = params.get('p3'); }
+  if(params.has('x0')) { document.getElementById('x0').value = params.get('x0'); }
+  if(params.has('y0')) { document.getElementById('y0').value = params.get('y0'); }
+  if(params.has('z0')) { document.getElementById('z0').value = params.get('z0'); }
+  if(params.has('cm')) { document.getElementById('colormode').value = params.get('cm'); }
+  if(params.has('proj')) { document.getElementById('projection').value = params.get('proj'); }
+  if(params.has('orbits')) {
+    orbitCount = parseInt(params.get('orbits'));
+    document.querySelectorAll('.orbit-cnt-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.textContent) === orbitCount);
+    });
+  }
+  updateParam(); initOrbits();
+}
+
+// ─── VISIT COUNTER (localStorage) ──────────────────────────────────────────
+function initVisitCounter() {
+  try {
+    let visits = parseInt(localStorage.getItem('chaoslab_visits') || '0') + 1;
+    localStorage.setItem('chaoslab_visits', visits);
+    const el = document.getElementById('visit-counter');
+    if(el) el.textContent = visits.toLocaleString() + (visits === 1 ? ' visita' : ' visitas');
+  } catch(e) {}
+}
+
+// ─── GALLERY ───────────────────────────────────────────────────────────────
+const GALLERY_PRESETS = [
+  { label: 'LORENZ CLÁSICO', sub: 'σ=10 ρ=28 β=2.667', mode: 'lorenz', p:{p1:10,p2:28,p3:2.667}, x0:0.1,y0:0,z0:1, cm:'velocity', desc:'El atractor original. Dos lóbulos, caos determinista puro.' },
+  { label: 'LORENZ PROFUNDO', sub: 'σ=16 ρ=45.9 β=4', mode: 'lorenz', p:{p1:16,p2:45.9,p3:4}, x0:1,y0:1,z0:1, cm:'zcoord', desc:'Parámetros extremos. Estructura fractal más densa y compleja.' },
+  { label: 'RÖSSLER', sub: 'a=0.2 b=0.2 c=5.7', mode: 'rossler', p:{p1:0.2,p2:0.2,p3:5.7}, x0:0.1,y0:0,z0:0, cm:'time', desc:'Un solo lóbulo en espiral. El sistema caótico más simple.' },
+  { label: 'HALVORSEN', sub: 'a=1.4', mode: 'halvorsen', p:{p1:1.4,p2:0,p3:0}, x0:0.1,y0:0,z0:0, cm:'velocity', desc:'Simetría cúbica perfecta. Los tres ejes son idénticos.' },
+  { label: 'THOMAS', sub: 'b=0.19', mode: 'thomas', p:{p1:0.19,p2:0,p3:0}, x0:0.1,y0:0,z0:0, cm:'orbit', desc:'Basado en funciones seno. Produce geometría hipnótica.' },
+  { label: 'LORENZ PERIÓDICO', sub: 'ρ=99.96', mode: 'lorenz', p:{p1:10,p2:99.96,p3:2.667}, x0:0.1,y0:0,z0:1, cm:'time', desc:'Rho extremo — órbitas casi periódicas en el borde del caos.' }
+];
+
+function openGallery() {
+  document.getElementById('gallery-modal').classList.add('open');
+  renderGalleryCards();
+}
+function closeGallery() {
+  document.getElementById('gallery-modal').classList.remove('open');
+}
+
+function renderGalleryCards() {
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = '';
+  GALLERY_PRESETS.forEach((preset, idx) => {
+    const card = document.createElement('div');
+    card.className = 'gallery-card';
+
+    // Mini canvas preview
+    const c = document.createElement('canvas');
+    c.width = 240; c.height = 150;
+    card.appendChild(c);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'g-label';
+    lbl.innerHTML = `<span>${preset.label}</span> — ${preset.sub}<br><span style="color:var(--muted);font-size:8px;">${preset.desc}</span>`;
+    card.appendChild(lbl);
+
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'g-load-btn';
+    loadBtn.textContent = '▶ CARGAR';
+    loadBtn.onclick = (e) => { e.stopPropagation(); loadGalleryPreset(idx); };
+    card.appendChild(loadBtn);
+
+    card.onclick = () => loadGalleryPreset(idx);
+    grid.appendChild(card);
+
+    // Render preview async
+    setTimeout(() => renderMiniAttractor(c, preset), idx * 80);
+  });
+}
+
+function renderMiniAttractor(canvas, preset) {
+  const ctx2 = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx2.fillStyle = '#020408';
+  ctx2.fillRect(0,0,W,H);
+
+  const sys = SYSTEMS[preset.mode] || SYSTEMS.lorenz;
+  const fn = sys.fn;
+  let mx=preset.x0||0.1, my=preset.y0||0, mz=preset.z0||1;
+
+  // Warmup
+  for(let i=0;i<500;i++) [mx,my,mz]=rk4(mx,my,mz,fn,preset.p,0.01);
+
+  // Render trail
+  let px2=null,py2=null;
+  for(let i=0;i<2000;i++){
+    [mx,my,mz]=rk4(mx,my,mz,fn,preset.p,0.01);
+    const sx=mx*3+W/2, sy=-mz*2.5+H/2;
+    const hue=180+(i/2000)*200;
+    ctx2.fillStyle=`hsla(${hue},80%,65%,0.5)`;
+    ctx2.fillRect(sx|0,sy|0,1,1);
+  }
+}
+
+function loadGalleryPreset(idx) {
+  const pr = GALLERY_PRESETS[idx];
+  const modeBtn = document.querySelector(`.tab-btn[onclick*="'${pr.mode}'"]`);
+  setMode(pr.mode, modeBtn);
+  document.getElementById('p1').value = pr.p.p1;
+  document.getElementById('p2').value = pr.p.p2;
+  document.getElementById('p3').value = pr.p.p3;
+  document.getElementById('x0').value = pr.x0;
+  document.getElementById('y0').value = pr.y0;
+  document.getElementById('z0').value = pr.z0;
+  document.getElementById('colormode').value = pr.cm;
+  updateParam(); initOrbits();
+  closeGallery();
+}
+
+// ─── BOOT ──────────────────────────────────────────────────────────────────
+function boot() {
+  resize();
+  updateParam();
+  initOrbits();
+  drawBifurcation();
+  loadFromURL();
+  initVisitCounter();
+  (function loop(){ drawFrame(); requestAnimationFrame(loop); })();
+}
+
+boot();
+</script>
+</body>
+</html>
